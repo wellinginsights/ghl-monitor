@@ -1,10 +1,8 @@
 name: Check GHL Account Status
 
-# Run this workflow every day at 12:00 PM UTC
 on:
   schedule:
     - cron: '0 12 * * *'
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
@@ -25,7 +23,7 @@ jobs:
           pip install requests
 
       - name: Run GHL Check Script
-        shell: python  # <-- ADD THIS LINE
+        shell: python
         env:
           GHL_API_KEY: ${{ secrets.GHL_API_KEY }}
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
@@ -57,15 +55,17 @@ jobs:
           # --- 2. Find Suspended Accounts ---
           suspended_accounts = []
           for location in locations:
-              # IMPORTANT: Check for the 'status' field
+              # DEBUG: ADD THIS LINE TO SEE ALL STATUSES
+              print(f"  -> Checking Location: {location.get('name', 'N/A')}, Status: {location.get('status', 'NOT FOUND')}")
+              
               if location.get('status') == 'suspended':
                   suspended_accounts.append(location.get('name', 'N/A'))
           
-          print(f"Found {len(suspended_accounts)} suspended accounts.")
+          print(f"\nFound {len(suspended_accounts)} suspended accounts.")
 
           # --- 3. Send Email if Necessary ---
           if not suspended_accounts:
-              print("No suspended accounts found. Exiting.")
+              print("No suspended accounts to report. Exiting.")
               exit(0)
           
           print("Suspended accounts found. Preparing to send email via SendGrid...")
