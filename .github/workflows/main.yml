@@ -25,6 +25,7 @@ jobs:
           pip install requests
 
       - name: Run GHL Check Script
+        shell: python  # <-- ADD THIS LINE
         env:
           GHL_API_KEY: ${{ secrets.GHL_API_KEY }}
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
